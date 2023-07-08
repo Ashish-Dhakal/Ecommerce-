@@ -9,25 +9,50 @@
               JOIN product AS p ON ct.p_id = p.p_id 
               WHERE c.c_fname = '$c_fname' AND c.c_lname = '$c_lname'";
 
-              
+
 
     $result = $conn->query($query); // Execute the query and assign the result
 
-           $rowCount = $result->num_rows;
-           $_SESSION['rowCount'] = $rowCount;
+    $rowCount = $result->num_rows;
+    $_SESSION['rowCount'] = $rowCount;
+
+    // if (isset($_POST['remove'])) {
+    //     $customerId = intval($_POST['remove']);
+
+    //     // Prepare and execute the delete query
+    //     $removeQuery = "DELETE FROM cart WHERE cart_id = $customerId";
+    //     if ($conn->query($removeQuery)) {
+    //         header("Location: ./usercart.php");
+    //         exit();
+    //     } else {
+    //         echo "Error deleting item from cart: " . $conn->error;
+    //     }
+    // }
+
+
+
 
     if (isset($_POST['remove'])) {
-        $customerId = intval($_POST['remove']);
+        $cartId = intval($_POST['remove']);
 
-        // Prepare and execute the delete query
-        $removeQuery = "DELETE FROM cart WHERE cart_id = $customerId";
-        if ($conn->query($removeQuery)) {
-            header("Location: ./usercart.php");
-            exit();
+        // Delete related payment rows first
+        $deletePaymentQuery = "DELETE FROM payment WHERE cart_id = $cartId";
+        if ($conn->query($deletePaymentQuery)) {
+            // Proceed with deleting the cart row
+            $deleteCartQuery = "DELETE FROM cart WHERE cart_id = $cartId";
+            if ($conn->query($deleteCartQuery)) {
+                header("Location: ./usercart.php");
+                exit();
+            } else {
+                echo "Error deleting item from cart: " . $conn->error;
+            }
         } else {
-            echo "Error deleting item from cart: " . $conn->error;
+            echo "Error deleting payment for cart item: " . $conn->error;
         }
     }
+
+
+
 
     // Calculate the total price
     $totalPrice = 0;
@@ -81,7 +106,7 @@
     <div class="image">
         <img src="../resources/image/qr-img.jpg" alt="" style="height: 150px;">
     </div>
-    <h4>Scan me for payment <span style="color: red;">*<span style="font-size: 15px;" >(remember the transaction ID to enter below )</span></span></h4>
+    <h4>Scan me for payment <span style="color: red;">*<span style="font-size: 15px;">(remember the transaction ID to enter below )</span></span></h4>
 
     <br>
 
@@ -108,16 +133,16 @@
             <tr>
                 <th colspan="2" style="text-align: center;">Total <br>
                     <form method="post" action="./checkout.php">
-                        <input type="text" name="transaction_id" placeholder="Enter transaction ID of payment" style=" width:260px; " required >
+                        <input type="text" name="transaction_id" placeholder="Enter transaction ID of payment" style=" width:260px; " required>
                         <?php $_SESSION['c_fname'];
-                        $_SESSION['c_lname'];?>
+                        $_SESSION['c_lname']; ?>
                         <button type="submit" name="checkout" value="<?php ?>" class="btn btn-success" style="margin-left: 500px;">Checkout</button>
 
                     </form>
 
                 </th>
-                <td><?php echo $totalPrice ;
-                 $_SESSION['totalPrice'] = $totalPrice; ?><br>
+                <td><?php echo $totalPrice;
+                    $_SESSION['totalPrice'] = $totalPrice; ?><br>
                     <!-- <button type="submit" name="checkout" value="<?php ?>" class="btn btn-success">Checkout</button> -->
 
 
