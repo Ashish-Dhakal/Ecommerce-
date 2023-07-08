@@ -2,12 +2,20 @@
  <main class="main-container">
  
          <?php
+        //  $q1 = "SELECT * FROM customer;";
+        //  $result1 = $conn->query($q1);
+        // $row1 = $result1->fetch_assoc();
+        // $c_id = $row1['c_id'];
+
+        // echo $c_id;
+
 
         // Retrieve the customer's cart items
+        $c_fname = $_SESSION['c_fname'];
         $query = "SELECT ct.cart_id , c.c_id 
           FROM customer AS c
           JOIN cart AS ct ON c.c_id = ct.c_id
-          WHERE c.c_fname = 'Lachhu'";
+          WHERE c.c_fname = '$c_fname'";
 
         $result = $conn->query($query);
 
@@ -16,6 +24,7 @@
         $cartIds = array();
         while ($row = $result->fetch_assoc()) {
             $cartIds[] = $row['cart_id'];
+            $c_id = $row['c_id'];
 
         }
 
@@ -27,8 +36,8 @@
 
             // Store payment details for each cart item
             foreach ($cartIds as $cartId) {
-                $query = "INSERT INTO payment (p_amount, cart_id, transaction_id)
-                        VALUES ('$totalPrice', '$cartId', '$transaction_id')";
+                $query = "INSERT INTO payment (c_id,p_amount, cart_id, transaction_id)
+                        VALUES ('$c_id','$totalPrice', '$cartId', '$transaction_id')";
 
                 if ($conn->query($query)) {
                     // Perform any additional actions or validations if required
@@ -43,8 +52,8 @@
             exit();
         } else {
             // Redirect the user back to usercart.php if transaction ID is not entered or there are no cart items
-            echo "<script>alert('error occur'); </scrpt>";
-            header("Location: ./usercart.php");
+              echo "error add bhayena haoi  not added";
+            //header("Location: ./usercart.php");
             exit();
         }
 
