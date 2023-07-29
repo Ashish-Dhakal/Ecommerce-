@@ -28,16 +28,18 @@
 
         <section class="header-section">
 
+
             <div id="header-top">
                 <nav class="top-header">
                     <a href="./index.php" class="image"> <img src="./resources/image/E-MALL.png" alt="LOGO"> </a>
                     <a href="./index.php">
                         <span class="mall-name">E-MALL</span>
-
                     </a>
                     <input class="search" placeholder="Search...">
                     <button class="button" type="submit"> <i class="fas fa-search"></i> </button>
                 </nav>
+
+
             </div>
 
             <div class="header-buttom">
