@@ -3,7 +3,7 @@
     <?php
     $c_fname = $_SESSION['c_fname'];
     $c_lname = $_SESSION['c_lname'];
-    $query = "SELECT c.c_id, ct.cart_id, p.p_name, p.p_price, ct.quantity, ct.total_price , p.p_image 
+    $query = "SELECT c.c_id, ct.cart_id, p.p_name, p.p_price, ct.quantity, ct.total_price , p.p_image ,p.p_id 
               FROM customer AS c 
               JOIN cart AS ct ON c.c_id = ct.c_id 
               JOIN product AS p ON ct.p_id = p.p_id 
@@ -13,24 +13,9 @@
 
     $result = $conn->query($query); // Execute the query and assign the result
 
+
     $rowCount = $result->num_rows;
     $_SESSION['rowCount'] = $rowCount;
-
-    // if (isset($_POST['remove'])) {
-    //     $customerId = intval($_POST['remove']);
-
-    //     // Prepare and execute the delete query
-    //     $removeQuery = "DELETE FROM cart WHERE cart_id = $customerId";
-    //     if ($conn->query($removeQuery)) {
-    //         header("Location: ./usercart.php");
-    //         exit();
-    //     } else {
-    //         echo "Error deleting item from cart: " . $conn->error;
-    //     }
-    // }
-
-
-
 
     if (isset($_POST['remove'])) {
         $cartId = intval($_POST['remove']);
@@ -51,14 +36,36 @@
         }
     }
 
-
-
-
     // Calculate the total price
     $totalPrice = 0;
     while ($row = $result->fetch_assoc()) {
         $totalPrice += $row['total_price'];
     }
+    ?>
+
+    <?php
+
+
+    $product_ids = array();
+
+    $query4 = "SELECT c_id FROM customer WHERE c_fname = '$c_fname' ";
+    $result4 = $conn->query($query4);
+    $row4 = $result4->fetch_assoc();
+    $customer_id = $row4['c_id'];
+
+    $query5 = "SELECT p_id FROM cart WHERE c_id = '$customer_id'";
+    $result5 = $conn->query($query5);
+
+    if ($result5->num_rows > 0) {
+        while ($row5 = $result5->fetch_assoc()) {
+            $product_ids[] = $row5['p_id'];
+        }
+    }
+
+    $product_ids_string = implode('-', $product_ids);
+    $invoice_no =$product_ids_string . date("-Y-m-d");
+
+
     ?>
     <!-- item display in cart -->
     <h3>Manage Cart Item</h3>
@@ -77,6 +84,10 @@
             <?php
             $result->data_seek(0); // Reset the result set pointer
             while ($row = $result->fetch_assoc()) {
+                // $invoice_no = $row['p_id'];
+                //   echo $invoice_no . date("-Y-m-d ");
+
+
             ?>
                 <tr>
                     <th scope="row"><?php echo $row['p_name'] ?></th>
@@ -92,66 +103,22 @@
                 </tr>
             <?php } ?>
             <tr>
-                <th colspan="4" style="text-align: center;">Total</th>
-                <td><?php echo $totalPrice;
-
-                    $_SESSION['totalPrice'] =  $totalPrice; ?></td>
-                <td> </td>
-            </tr>
-        </tbody>
-    </table>
-    <br> <br>
-
-    <h3>Process to checkout</h3>
-    <div class="image">
-        <img src="../resources/image/qr-img.jpg" alt="" style="height: 150px;">
-    </div>
-    <h4>Scan me for payment <span style="color: red;">*<span style="font-size: 15px;">(remember the transaction ID to enter below )</span></span></h4>
-
-    <br>
-
-    <table class="table table-striped">
-        <tr>
-            <thead>
-
-                <th>Product Name</th>
-                <th>Product Price</th>
-                <th>Total Price</th>
-        </tr>
-        </thead>
-        <tbody>
-            <?php
-            $result->data_seek(0); // Reset the result set pointer
-            while ($row = $result->fetch_assoc()) {
-            ?>
-                <tr>
-                    <th scope="row"><?php echo $row['p_name'] ?></th>
-                    <td><?php echo $row['p_price'] ?></td>
-                    <td><?php echo $row['total_price'] ?></td>
-                </tr>
-            <?php } ?>
-            <tr>
-                <th colspan="2" style="text-align: center;">Total <br>
-                    <form method="post" action="./checkout.php">
-                        <input type="text" name="transaction_id" placeholder="Enter transaction ID of payment" style=" width:260px; " required>
-                        <?php $_SESSION['c_fname'];
-                        $_SESSION['c_lname']; ?>
-                        <button type="submit" name="checkout" value="<?php ?>" class="btn btn-success" style="margin-left: 500px;">Checkout</button>
-
+                <th colspan="2"></th>
+                <th>Total</th>
+                <td></td>
+                <th><?php echo $totalPrice;
+                    $_SESSION['totalPrice'] =  $totalPrice; ?></th>
+                <td>
+                    <form method="post" action="./user-update.php" method="post">
+                        <input type="hidden" value="<?php echo $invoice_no; ?>" name="invoice_no">
+                        <input type="hidden" value="<?php echo $product_ids_string; ?>" name="product_ids">
+                        <input type="hidden" value="<?php echo $totalPrice; ?>" name="total">
+                        <button type="submit" name="place_order" value="" class="btn btn-success">Place Order</button>
                     </form>
-
-                </th>
-                <td><?php echo $totalPrice;
-                    $_SESSION['totalPrice'] = $totalPrice; ?><br>
-                    <!-- <button type="submit" name="checkout" value="<?php ?>" class="btn btn-success">Checkout</button> -->
-
-
                 </td>
             </tr>
         </tbody>
-
     </table>
-
 
 
 </main>
