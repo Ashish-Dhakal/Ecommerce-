@@ -8,10 +8,10 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 // echo "Connected successfully";
-// function show($data)
-// {
-//     echo '<pre>';
-//     print_r($data);
-//     echo '</pre>';
-// }
+function show($data)
+{
+    echo '<pre>';
+    print_r($data);
+    echo '</pre>';
+}
 ?>
