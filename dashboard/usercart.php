@@ -66,11 +66,7 @@
     $_SESSION['product_ids_string'] = $product_ids_string;
     // $invoice_no =md5($product_ids_string . date("-Y-m-d")."-".time(), 0, 8);
 
-    $invoice_no = substr(md5($product_ids_string . date("Y-m-d") . "-" . time()), 0, 10);
-
-
-
-
+    $invoice_no = substr(md5($product_ids_string . date("Y-m-d")."-".date("h:i:sa")), 0, 10);
     ?>
     <!-- item display in cart -->
     <h3>Manage Cart Item</h3>
