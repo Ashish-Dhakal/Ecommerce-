@@ -1,12 +1,16 @@
 <?php  include '../dashboard/user-dash.php'; ?>
 
 <?php
-if(isset($_GET['oid'])){
+if((isset($_GET['oid'])) && (isset($_GET['amt']))&& (isset($_GET['refId']))   ){
     $invoice_no =  $_GET['oid'];
+    $refId = $_GET['refId'];
+    $amt = $_GET['amt'];
+    
 
     $query = "SELECT orders_id,product_ids,total,invoice_no, status FROM orders   WHERE invoice_no = '$invoice_no' ";
     // show($query);
     // show($query);
+    //show($refId);
     $result = $conn->query($query);
     
     
@@ -14,8 +18,13 @@ if(isset($_GET['oid'])){
         show("aayuo");
         $query1 = "UPDATE orders SET status=1 WHERE invoice_no = '$invoice_no' ";
         $result1 = $conn->query($query1);
-        if($result){
-            header('Location:./ordered-item.php');
+
+
+        if($result1){
+            $_SESSION['refId'] = $refId;
+            $_SESSION['amt'] = $amt;
+            $_SESSION['invoice_no'] = $invoice_no;
+            header('Location:./purchased-item.php');
             die();
         }
         else{
