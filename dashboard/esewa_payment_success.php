@@ -1,11 +1,11 @@
 <?php  include '../dashboard/user-dash.php'; ?>
 
 <?php
-if((isset($_GET['oid'])) && (isset($_GET['amt']))&& (isset($_GET['refId']))   ){
-    $invoice_no =  $_GET['oid'];
+if((isset($_GET['oid']))&& (isset($_GET['amt'])) && (isset($_GET['refId']))    ){
+     $invoice_no =  $_GET['oid'];
     $refId = $_GET['refId'];
     $amt = $_GET['amt'];
-    
+    $pay_date = date("h:i:sa");
 
     $query = "SELECT orders_id,product_ids,total,invoice_no, status FROM orders   WHERE invoice_no = '$invoice_no' ";
     // show($query);
@@ -15,15 +15,14 @@ if((isset($_GET['oid'])) && (isset($_GET['amt']))&& (isset($_GET['refId']))   ){
     
     
     if (mysqli_num_rows($result) == 1 ) {
-        show("aayuo");
+        //show("aayuo");
         $query1 = "UPDATE orders SET status=1 WHERE invoice_no = '$invoice_no' ";
         $result1 = $conn->query($query1);
 
 
         if($result1){
-            $_SESSION['refId'] = $refId;
-            $_SESSION['amt'] = $amt;
-            $_SESSION['invoice_no'] = $invoice_no;
+           $query2 = " INSERT INTO payment (invoice_no, refId, amount, pay_date)  VALUES ('$invoice_no' , '$refId' , '$amt' , '$pay_date')";
+           $result2 = $conn->query($query2);
             header('Location:./purchased-item.php');
             die();
         }
