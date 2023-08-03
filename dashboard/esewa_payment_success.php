@@ -5,13 +5,15 @@ if((isset($_GET['oid']))&& (isset($_GET['amt'])) && (isset($_GET['refId']))    )
      $invoice_no =  $_GET['oid'];
     $refId = $_GET['refId'];
     $amt = $_GET['amt'];
-    $pay_date = date("h:i:sa");
+    $pay_date = date("d/m/Y").date("h:i:sa");
 
     $query = "SELECT orders_id,product_ids,total,invoice_no, status FROM orders   WHERE invoice_no = '$invoice_no' ";
     // show($query);
     // show($query);
     //show($refId);
     $result = $conn->query($query);
+    $c_id = $_SESSION['c_id'];
+    //echo $c_id;
     
     
     if (mysqli_num_rows($result) == 1 ) {
@@ -21,7 +23,7 @@ if((isset($_GET['oid']))&& (isset($_GET['amt'])) && (isset($_GET['refId']))    )
 
 
         if($result1){
-           $query2 = " INSERT INTO payment (invoice_no, refId, amount, pay_date)  VALUES ('$invoice_no' , '$refId' , '$amt' , '$pay_date')";
+           $query2 = " INSERT INTO payment (invoice_no, refId, amount, pay_date , c_id )  VALUES ('$invoice_no' , '$refId' , '$amt' , '$pay_date' , '$c_id')";
            $result2 = $conn->query($query2);
             header('Location:./purchased-item.php');
             die();
