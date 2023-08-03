@@ -89,7 +89,7 @@
                 <i class="fa-sharp fa-solid fa-arrow-progress"></i>
             </div>
             <?php
-            $query3 = 'SELECT COUNT(DISTINCT transaction_id) AS total_transactions FROM payment';
+            $query3 = 'SELECT COUNT(DISTINCT payment_id) AS total_transactions FROM payment';
             $result3 = $conn->query($query3);
 
             if ($result3 && $result3->num_rows > 0) {
@@ -112,7 +112,21 @@
                 </div>
                 <i class="fa-sharp fa-solid fa-dollar-sign"></i>
             </div>
-            <div class="card-number">22</div>
+
+            <?php
+                 $sql = "SELECT amount FROM payment";
+                 // Execute the query
+                $result = $conn->query($sql);
+                 $totalPrice = 0;
+                if ($result->num_rows > 0) {
+                 while ($row = $result->fetch_assoc()) { 
+                 $totalPrice += $row["amount"];
+                }
+            }
+            
+            ?>
+            
+            <div class="card-number"><?=$totalPrice?></div>
 
         </div>
 
