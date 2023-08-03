@@ -1,6 +1,3 @@
     <?php include '../dashboard/user-dash.php'; ?>
-    hello
-
-</body>
-
-</html>
+    <main class="main-container">
+    </main>
