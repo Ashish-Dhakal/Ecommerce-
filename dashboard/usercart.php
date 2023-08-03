@@ -18,7 +18,7 @@
 
     if (isset($_POST['remove'])) {
         $cartId = intval($_POST['remove']);
-        echo $cartId;
+        //echo $cartId;
 
         // Delete related payment rows first
         $deletePaymentQuery = "DELETE FROM cart WHERE cart_id = $cartId";
@@ -53,7 +53,7 @@
     $row4 = $result4->fetch_assoc();
     $customer_id = $row4['c_id'];
 
-    $query5 = "SELECT p_id FROM cart WHERE c_id = '$customer_id'";
+    $query5 = "SELECT p_id , quantity FROM cart WHERE c_id = '$customer_id'";
     $result5 = $conn->query($query5);
 
     if ($result5->num_rows > 0) {
